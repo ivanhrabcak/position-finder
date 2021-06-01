@@ -69,6 +69,7 @@ class DrawingCanvas(tkinter.Canvas):
         self.bind_all("<Button-1>", self.on_mouse1_down)
         self.bind_all("<Button-3>", self.on_mouse2_down)
         self.bind_all("<ButtonRelease-1>", self.on_mouse1_up)
+        self.bind_all("<Motion>", self.on_mouse_move)
 
         # fetch the current window width and height
         self.height = self.winfo_reqheight() 
@@ -93,6 +94,23 @@ class DrawingCanvas(tkinter.Canvas):
         # circle drawing
         self.is_drawing_circle = False
         self.circle_starting_point = None
+    
+    def on_mouse_move(self, event):
+        mx = event.x
+        my = event.y
+
+        self.delete("preview")
+
+        if self.is_drawing_rectangle:
+            rect_width = (self.rectangle_starting_point.x - mx) * -1
+            rect_height = (self.rectangle_starting_point.y - my) * -1
+            x, y = self.rectangle_starting_point.x, self.rectangle_starting_point.y
+
+            self.create_rectangle(x, y, x + rect_width, y + rect_height, tags=["preview"])
+        elif self.is_drawing_line:
+            self.create_line(self.line_starting_point.x, self.line_starting_point.y, mx, my, tags=["preview"])
+        elif self.is_drawing_circle:
+            self.create_oval(self.circle_starting_point.x, self.circle_starting_point.y, mx, my, tags=["preview"])
     
     def on_mouse1_up(self, event):
         mx = event.x
@@ -120,6 +138,8 @@ class DrawingCanvas(tkinter.Canvas):
     def on_mouse2_down(self, event):
         mx = event.x
         my = event.y
+
+        self.delete("preview")
 
         item = self.find_closest(mx, my)
         drawn_shape = self.get_drawn_shape_by_item(*item)
