@@ -66,6 +66,7 @@ class DrawingCanvas(tkinter.Canvas):
         # register all calback we'll need
         self.bind("<Configure>", self.on_resize) # resize callback
         self.bind_all("<KeyPress>", self.on_keydown)
+        self.bind_all("<KeyRelease>", self.on_keyup)
         self.bind_all("<Button-1>", self.on_mouse1_down)
         self.bind_all("<Button-3>", self.on_mouse2_down)
         self.bind_all("<ButtonRelease-1>", self.on_mouse1_up)
@@ -78,6 +79,7 @@ class DrawingCanvas(tkinter.Canvas):
         self.shape = Shape.Rectangle # set the default shape
 
         self.drawn_shapes = []
+        self.pressed_keys = []
 
         # triangle drawing
         self.is_choosing_triangle_points = False 
@@ -243,9 +245,28 @@ class DrawingCanvas(tkinter.Canvas):
             self.addtag_all("all")
             self.delete("all")
         
+        if not key in self.pressed_keys:
+            self.pressed_keys.append(key)
+
         if shape_before != self.shape:
             self.delete("flash_text")
             self.flash_text(self.shape_to_string(self.shape))
+
+        if key == "z" and "Control_L" in self.pressed_keys:
+            if len(self.drawn_shapes) != 0:
+                last_shape = self.drawn_shapes[-1]
+                self.delete(last_shape.item)
+                self.flash_text("Undo")
+    
+    def on_keyup(self, event):
+        key = event.keysym
+
+        if self.is_choosing_triangle_points:
+            return
+
+        if key in self.pressed_keys:
+            self.pressed_keys.remove(key)
+
 
     def on_resize(self, event):
         print("Window resized: ", end="")
