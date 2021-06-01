@@ -2,7 +2,7 @@
 A small mspaint-like program to help me get through my computer science classes.
 
 # Keybinds
----------------------------------------------------------------------------------------------------------------------------
+
 | Key                | Description                                                                                        |
 |--------------------|----------------------------------------------------------------------------------------------------|
 | R                  | Switch to rectangle                                                                                |
@@ -12,6 +12,6 @@ A small mspaint-like program to help me get through my computer science classes.
 | Left mouse button  | Draw the current shape                                                                             |
 | Right mouse button | Show (in the console) the coordinates that are needed for drawing the shape closest to your cursor |
 | Ctrl + z           | Undo                                                                                               |
----------------------------------------------------------------------------------------------------------------------------
+
 
 Resize the window to the size of your canvas for best results
