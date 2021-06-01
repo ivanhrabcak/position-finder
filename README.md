@@ -1,5 +1,5 @@
 # position-finder
-A small mspaint-like program to help me through my computer science classes.
+A small mspaint-like program to help me get through my computer science classes.
 
 # Keybinds
 | Key                | Description                                                                                        |
