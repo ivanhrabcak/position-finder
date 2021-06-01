@@ -78,8 +78,8 @@ class DrawingCanvas(tkinter.Canvas):
 
         self.drawn_shapes = []
 
-        """helper variables"""
-        self.is_choosing_triangle_points = False # triangle drawing
+        # triangle drawing
+        self.is_choosing_triangle_points = False 
         self.current_triangle_points = []
         
         # rectangle drawing
