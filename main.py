@@ -3,10 +3,10 @@ from enum import Enum
 from tkinter.constants import BOTH, YES
 from threading import Timer
 from typing import Union
+import os
 
 def delayed_execution(fun, args, timeout):
     Timer(timeout, fun, args).start()
-
 
 class Shape(Enum):
     Rectangle = 0
@@ -225,6 +225,9 @@ class DrawingCanvas(tkinter.Canvas):
         else:
             return "Unknown Shape"
     
+    def cls(self):
+        os.system('cls' if os.name=='nt' else 'clear')
+    
     def on_keydown(self, event):
         key = event.keysym
 
@@ -244,6 +247,10 @@ class DrawingCanvas(tkinter.Canvas):
         elif key == "BackSpace":
             self.addtag_all("all")
             self.delete("all")
+        elif key == "Return":
+            self.cls()
+            code_generator = CodeGenerator(self.drawn_shapes)
+            print(code_generator.generate_code())
         
         if not key in self.pressed_keys:
             self.pressed_keys.append(key)
@@ -285,6 +292,64 @@ class DrawingCanvas(tkinter.Canvas):
         # all the canvas widget have to be tagged with the tag 'all'
         self.addtag_all("all")
         self.scale("all", 0, 0, width_scale, height_scale)
+
+
+class CodeGenerator:
+    def __init__(self, drawn_shapes):
+        self.shapes = drawn_shapes
+    
+    def generate_triangle(self, triangle: Triangle):
+        output = ""
+
+        output += "// Triangle \n"
+        output += f"Image1.Canvas.MoveTo({str(triangle.x.x)}, {str(triangle.x.y)});\n"
+        output += f"Image1.Canvas.LineTo({str(triangle.y.x)}, {str(triangle.y.y)});\n"
+        output += f"Image1.Canvas.LineTo({str(triangle.z.x)}, {str(triangle.z.y)});\n"
+        output += f"Image1.Canvas.LineTo({str(triangle.x.x)}, {str(triangle.x.y)});\n"
+
+        return output
+
+    def generate_rectangle(self, rectangle: Rectangle):
+        output = ""
+
+        output += "// Rectangle \n"
+        output += f"Image1.Canvas.Rectangle({str(rectangle.start_point.x)}, {str(rectangle.start_point.y)}, "
+        output += f"{str(rectangle.end_point.x)}, {str(rectangle.end_point.y)});\n"
+
+        return output
+    
+    def generate_line(self, line: Line):
+        output = ""
+        
+        output += "// Line \n"
+        output += f"Image1.Canvas.MoveTo({str(line.start_point.x)}, {str(line.start_point.y)});\n"
+        output += f"Image1.Canvas.LineTo({str(line.end_point.x)}, {str(line.end_point.y)});\n"
+
+        return output
+    
+    def generate_ellipse(self, ellipse: Circle):
+        output = ""
+
+        output += "// Ellipse \n"
+        output += f"Image1.Canvas.Ellipse({str(ellipse.x.x)}, {str(ellipse.x.y)}, {str(ellipse.y.x)}, {str(ellipse.y.y)});\n"
+
+        return output
+    
+    def generate_code(self):
+        output = ""
+
+        for shape in self.shapes:
+            if type(shape) == Rectangle:
+                output += self.generate_rectangle(shape)
+            elif type(shape) == Triangle:
+                output += self.generate_triangle(shape)
+            elif type(shape) == Circle:
+                output += self.generate_ellipse(shape)
+            elif type(shape) == Line:
+                output += self.generate_line(shape)
+        
+        return output
+
 
 
 class Application:
