@@ -13,7 +13,6 @@ class Shape(Enum):
     Line = 1
     Triangle = 2
     Circle = 3
-    Delete = 4
 
 class Point:
     def __init__(self, x, y):
